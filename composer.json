@@ -1,0 +1,62 @@
+{
+    "name": "grayloon/firechaser-laravel",
+    "description": "Laravel package for syncing composer package details to FireChaser.",
+    "homepage": "https://firechaser.app",
+    "license": "MIT",
+    "type": "project",
+    "keywords": [
+        "security",
+        "monitoring",
+        "laravel"
+    ],
+    "authors": [
+        {
+            "name": "Dalton McCleery",
+            "email": "dmccleery@grayloon.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Andy Hinkle",
+            "email": "ahinkle@grayloon.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "composer-runtime-api": "^2.0",
+        "guzzlehttp/guzzle": "^7.2"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.1",
+        "laravel/framework": "^10.0|^11.0",
+        "orchestra/testbench": "^7.0|^8.0",
+        "pestphp/pest": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "GrayLoon\\FireChaser\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "GrayLoon\\FireChaser\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "GrayLoon\\FireChaser\\FireChaserServiceProvider"
+            ],
+            "aliases": {
+                "FireChaser": "GrayLoon\\FireChaser\\FireChaserStorageFacade"
+            }
+        }
+    }
+}
