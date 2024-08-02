@@ -34,9 +34,9 @@ class FireChaserSyncController extends Controller
         if (
             config('app.env') === 'production'
             && config('firechaser.api_site_key')
-            && $request->query->has('api_site_key')
+            && $request->get('apiKey')
         ) {
-            if (config('firechaser.api_site_key') === $request->query->get('api_site_key')) {
+            if (config('firechaser.api_site_key') === $request->get('apiKey')) {
                 // Resolve current applications vendor packages.
                 $vendors = $this->composer?->getAllRawData();
 

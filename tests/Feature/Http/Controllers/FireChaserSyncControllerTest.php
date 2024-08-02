@@ -6,7 +6,7 @@ use Composer\InstalledVersions;
 use GrayLoon\FireChaser\Http\Controllers\FireChaserSyncController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
-use function Pest\Laravel\{get};
+use function Pest\Laravel\{post};
 
 $key = 'abcdefghijklmnopqrstuvwxyz1234567890';
 
@@ -19,7 +19,7 @@ beforeEach(function () use ($key) {
 it('fails when not in "production"', function (string $environment) {
     Config::set('app.env', $environment);
 
-    get(route('firechaser.sync'))
+    post(route('firechaser.sync'))
         ->assertStatus(500)
         ->assertContent('Application not in production or missing API Site Key.');
 })->with(['local', 'testing']);
@@ -27,19 +27,21 @@ it('fails when not in "production"', function (string $environment) {
 it('fails when no API Site Key is saved.', function () {
     Config::set('firechaser.api_site_key', null);
 
-    get(route('firechaser.sync'))
+    post(route('firechaser.sync'))
         ->assertStatus(500)
         ->assertContent('Application not in production or missing API Site Key.');
 });
 
 it('fails when no API Site Key is given from request.', function () {
-    get(route('firechaser.sync'))
+    post(route('firechaser.sync'))
         ->assertStatus(500)
         ->assertContent('Application not in production or missing API Site Key.');
 });
 
 it('fails when API Site Keys do not match.', function () {
-    get(route('firechaser.sync') . '?api_site_key=1234567890')
+    post(route('firechaser.sync'), [
+        'apiKey' => '1234567890'
+    ])
         ->assertStatus(403)
         ->assertContent('Invalid API Site Key given.');
 });
@@ -50,7 +52,9 @@ it('fails when no composer packages found', function () use ($key) {
         ->andReturn([]);
 
     $request = Request::create(
-        uri: route('firechaser.sync') . '?api_site_key=' . $key,
+        uri: route('firechaser.sync'),
+        method: 'POST',
+        parameters: ['apiKey' => $key]
     );
 
     $response = (new FireChaserSyncController(composer: $mockedComposer))->__invoke($request);
@@ -67,7 +71,9 @@ it('fails when no composer package versions found', function () use ($key) {
         ]);
 
     $request = Request::create(
-        uri: route('firechaser.sync') . '?api_site_key=' . $key,
+        uri: route('firechaser.sync'),
+        method: 'POST',
+        parameters: ['apiKey' => $key]
     );
 
     $response = (new FireChaserSyncController(composer: $mockedComposer))->__invoke($request);
@@ -90,7 +96,9 @@ it('filters out invalid packages', function () use ($key) {
         ]);
 
     $request = Request::create(
-        uri: route('firechaser.sync') . '?api_site_key=' . $key,
+        uri: route('firechaser.sync'),
+        method: 'POST',
+        parameters: ['apiKey' => $key]
     );
 
     $response = (new FireChaserSyncController(composer: $mockedComposer))->__invoke($request);
@@ -113,7 +121,9 @@ it('successful sync', function () use ($key) {
         ]);
 
     $request = Request::create(
-        uri: route('firechaser.sync') . '?api_site_key=' . $key,
+        uri: route('firechaser.sync'),
+        method: 'POST',
+        parameters: ['apiKey' => $key]
     );
 
     $response = (new FireChaserSyncController(composer: $mockedComposer))->__invoke($request);
